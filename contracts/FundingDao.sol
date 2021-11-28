@@ -36,10 +36,10 @@ contract VCDAO is ReentrancyGuard, AccessControl {
 
     mapping(uint256 => Proposal) private proposals;
     mapping(address => uint256) private stakeholders;
-    mapping(address => uint256) private contributors;
+    mapping(address => uint256) private members;
     mapping(address => uint256[]) private votes;
 
-    event NewContributor(address indexed fromAddress, uint256 amount);
+    event NewMember(address indexed fromAddress, uint256 amount);
     event NewProposal(address indexed proposer, uint256 amount);
     event Payment(
         address indexed stakeholder,
@@ -115,7 +115,7 @@ contract VCDAO is ReentrancyGuard, AccessControl {
         onlyMember("Only Members can call this function.")
         returns (uint256)
     {
-        return contributors[msg.sender];
+        return members[msg.sender];
     }
 
     function isStakeholder() public view returns (bool) {
@@ -123,7 +123,7 @@ contract VCDAO is ReentrancyGuard, AccessControl {
     }
 
     function isMember() public view returns (bool) {
-        return contributors[msg.sender] > 0;
+        return members[msg.sender] > 0;
     }
 
     function vote(uint256 proposalId, bool inFavour)
@@ -183,18 +183,18 @@ contract VCDAO is ReentrancyGuard, AccessControl {
     function createStakeholder() external payable {
         uint256 amount = msg.value;
         if (!hasRole(STAKEHOLDER, msg.sender)) {
-            uint256 total = contributors[msg.sender] + amount;
+            uint256 total = members[msg.sender] + amount;
             if (total >= 2 ether) {
                 _setupRole(STAKEHOLDER, msg.sender);
                 _setupRole(MEMBER, msg.sender);
                 stakeholders[msg.sender] = total;
-                contributors[msg.sender] += amount;
+                members[msg.sender] += amount;
             } else {
                 _setupRole(MEMBER, msg.sender);
-                contributors[msg.sender] += amount;
+                members[msg.sender] += amount;
             }
         } else {
-            contributors[msg.sender] += amount;
+            members[msg.sender] += amount;
             stakeholders[msg.sender] += amount;
         }
     }
