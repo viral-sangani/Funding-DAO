@@ -4,13 +4,13 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract VCDAO is ReentrancyGuard, AccessControl {
+contract FundingDAO is ReentrancyGuard, AccessControl {
     bytes32 public constant MEMBER = keccak256("MEMBER");
     bytes32 public constant STAKEHOLDER = keccak256("STAKEHOLDER");
 
     uint32 constant votingPeriod = 3 days;
 
-    uint256 proposalsCount;
+    uint256 public proposalsCount = 0;
 
     struct Proposal {
         uint256 id;
@@ -18,6 +18,7 @@ contract VCDAO is ReentrancyGuard, AccessControl {
         uint256 livePeriod;
         uint256 voteInFavor;
         uint256 voteAgainst;
+        string title;
         string desc;
         bool isCompleted;
         bool paid;
@@ -58,20 +59,27 @@ contract VCDAO is ReentrancyGuard, AccessControl {
     }
 
     function createProposal(
+        string calldata title,
         string calldata desc,
         address receiverAddress,
         uint256 amount
-    ) external onlyStakeholder("Only Stakeholders can create new proposal.") {
+    ) public payable onlyMember("Only members can create new proposal.") {
+        require(
+            msg.value == 5 * 10**18,
+            "You need to add 0.1 MATIC to create a proposal"
+        );
         uint256 proposalId = proposalsCount;
         Proposal storage proposal = proposals[proposalId];
         proposal.id = proposalId;
         proposal.desc = desc;
+        proposal.title = title;
         proposal.receiverAddress = payable(receiverAddress);
         proposal.proposer = payable(msg.sender);
         proposal.amount = amount;
         proposal.livePeriod = block.timestamp + votingPeriod;
         proposal.isPaid = false;
         proposal.isCompleted = false;
+        proposalsCount++;
         emit NewProposal(msg.sender, amount);
     }
 
@@ -127,7 +135,7 @@ contract VCDAO is ReentrancyGuard, AccessControl {
     }
 
     function vote(uint256 proposalId, bool inFavour)
-        external
+        public
         onlyStakeholder("Only Stakeholders can vote on a proposal.")
     {
         Proposal storage proposal = proposals[proposalId];
@@ -148,7 +156,8 @@ contract VCDAO is ReentrancyGuard, AccessControl {
     }
 
     function provideFunds(uint256 proposalId, uint256 fundAmount)
-        external
+        public
+        payable
         onlyStakeholder("Only Stakeholders can make payments")
     {
         Proposal storage proposal = proposals[proposalId];
@@ -166,7 +175,7 @@ contract VCDAO is ReentrancyGuard, AccessControl {
     }
 
     function releaseFunding(uint256 proposalId)
-        external
+        public
         payable
         onlyStakeholder("Only Stakeholders are allowed to release funds")
     {
@@ -180,7 +189,7 @@ contract VCDAO is ReentrancyGuard, AccessControl {
         proposal.isCompleted = true;
     }
 
-    function createStakeholder() external payable {
+    function createStakeholder() public payable {
         uint256 amount = msg.value;
         if (!hasRole(STAKEHOLDER, msg.sender)) {
             uint256 total = members[msg.sender] + amount;
