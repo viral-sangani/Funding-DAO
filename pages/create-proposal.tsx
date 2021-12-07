@@ -10,20 +10,37 @@ export default function Home() {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [recipient, setRecipient] = useState("");
+  const [image, setImage] = useState<File | null>();
   const { createProposal } = useData();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    var id;
+    if (image) {
+      console.log(`image`, image);
+      let formData = new FormData();
+      formData.append("image", image);
+      var res = await fetch("/api/upload-image", {
+        method: "POST",
+        body: formData,
+      });
+      var data = await res.json();
+      id = data.id;
+      console.log(`id`, id);
+    }
+    console.log(`data?.id ?? ""`, id ?? "");
     await createProposal({
       title,
       description,
       amount,
       recipient,
+      imageId: id ?? "",
     });
     setTitle("");
     setDescription("");
     setAmount("");
     setRecipient("");
+    setImage(null);
   };
 
   const { isMember, isStakeholder, loading } = useData();
@@ -64,6 +81,13 @@ export default function Home() {
                   onChange={(e) => setDescription(e.target.value)}
                   className="my-2 w-full py-3 px-3 text-base text-gray-700 bg-gray-100 rounded-md focus:outline-none"
                 ></textarea>
+                <input
+                  type="file"
+                  name="proposal-image"
+                  onChange={(e) =>
+                    setImage(e.target.files?.length ? e.target.files[0] : null)
+                  }
+                />
                 <input
                   value={recipient}
                   onChange={(e) => setRecipient(e.target.value)}

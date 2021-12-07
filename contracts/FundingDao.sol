@@ -20,6 +20,7 @@ contract FundingDAO is ReentrancyGuard, AccessControl {
         address proposer;
         uint256 totalFundRaised;
         Funding[] funders;
+        string imageId;
     }
 
     struct Funding {
@@ -61,7 +62,8 @@ contract FundingDAO is ReentrancyGuard, AccessControl {
         string calldata title,
         string calldata desc,
         address receiverAddress,
-        uint256 amount
+        uint256 amount,
+        string calldata imageId
     ) public payable onlyMember("Only members can create new proposal.") {
         require(
             msg.value == 5 * 10**18,
@@ -78,6 +80,7 @@ contract FundingDAO is ReentrancyGuard, AccessControl {
         proposal.livePeriod = block.timestamp + votingPeriod;
         proposal.isPaid = false;
         proposal.isCompleted = false;
+        proposal.imageId = imageId;
         proposalsCount++;
         emit NewProposal(msg.sender, amount);
     }

@@ -32,11 +32,13 @@ interface DataContextProps {
     description,
     amount,
     recipient,
+    imageId,
   }: {
     title: string;
     description: string;
     amount: string;
     recipient: string;
+    imageId: string;
   }) => Promise<void>;
 }
 
@@ -89,6 +91,7 @@ export const useProviderData = () => {
   const connect = async () => {
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum);
+      window.ethereum.request({ method: "eth_requestAccounts" });
       await window.ethereum.enable();
     } else if (window.web3) {
       window.web3 = new Web3(window.web3.currentProvider);
@@ -103,21 +106,19 @@ export const useProviderData = () => {
 
   const loadBlockchainData = async () => {
     const web3 = window.web3;
-    const fundingDaoData = FundingDAO.networks["1638870705645"];
+    const fundingDaoData = FundingDAO.networks["1638888476435"];
     if (fundingDaoData) {
       var fundingDaoContract = await new web3.eth.Contract(
         FundingDAO.abi,
         fundingDaoData.address
       );
       setFundingDao(fundingDaoContract);
-      console.log(`fundingDaoContract`, fundingDaoContract);
       setTimeout(async () => {
         var totalProposals = await fundingDaoContract.methods
           .getAllProposals()
           .call({ from: account });
         var tempProposals: Proposal[] = [];
         totalProposals.forEach((item: Proposal) => {
-          console.log(`item`, item);
           tempProposals.push(item);
         });
         setAllProposals(tempProposals);
@@ -126,13 +127,11 @@ export const useProviderData = () => {
           .call({
             from: account,
           });
-        console.log(`isStakeholder`, isStakeholder);
         setIsStakeholder(isStakeholder);
         var isMember = await fundingDaoContract.methods.isMember().call({
           from: account,
         });
         setIsMember(isMember);
-        console.log(`isMember`, isMember);
         if (isMember && !isStakeholder) {
           var memberBal = await fundingDaoContract.methods.getMemberBal().call({
             from: account,
@@ -183,24 +182,24 @@ export const useProviderData = () => {
     description,
     amount,
     recipient,
+    imageId,
   }: {
     title: string;
     description: string;
     amount: string;
     recipient: string;
+    imageId: string;
   }) => {
     if (amount === "" || amount === "0") {
       toast.error("Please enter valid amount", {});
     }
-    console.log(`fundingDao`, fundingDao);
-    console.log(title, description, amount, recipient);
     await fundingDao.methods
       .createProposal(
         title,
         description,
         recipient,
-        Web3.utils.toWei(amount, "ether")
-        // 500
+        Web3.utils.toWei(amount, "ether"),
+        imageId
       )
       .send({ from: account, value: Web3.utils.toWei("5", "ether") });
     loadBlockchainData();

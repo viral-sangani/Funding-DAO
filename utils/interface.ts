@@ -12,4 +12,5 @@ export interface Proposal {
   totalFundRaised: string;
   voteAgainst: string;
   voteInFavor: string;
+  imageId: string;
 }

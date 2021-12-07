@@ -1,9 +1,10 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { DH_CHECK_P_NOT_SAFE_PRIME } from "constants";
 import { Fragment, useEffect, useState } from "react";
 import Web3 from "web3";
+import Img from "next/image";
 import { useData } from "../contexts/dataContext";
 import { Proposal } from "../utils/interface";
+import Arweave from "arweave";
 
 interface Props {
   isOpen: boolean;
@@ -17,6 +18,24 @@ export const VoteModal: React.FC<Props> = ({
   proposal,
 }) => {
   const { allVotes, vote } = useData();
+  const [image, setImage] = useState<string>("");
+  useEffect(() => {
+    var arweave = Arweave.init({
+      host: "arweave.net", // Hostname or IP address for a Arweave host
+      port: 443, // Port
+      protocol: "https", // Network protocol http or https
+    });
+    if (proposal?.imageId) {
+      arweave.transactions
+        .getData(proposal?.imageId, {
+          decode: true,
+          string: true,
+        })
+        .then((data) => {
+          setImage(data as string);
+        });
+    }
+  });
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -76,6 +95,13 @@ export const VoteModal: React.FC<Props> = ({
                     {proposal?.desc}
                   </p>
                 </div>
+                {image && (
+                  <Img
+                    src={`data:image/png;base64,${image}`}
+                    width={100}
+                    height={100}
+                  />
+                )}
                 <div className="my-5">
                   <p className="text-sm text-gray-500 line-clamp-5">
                     Funding Amount -{" "}
