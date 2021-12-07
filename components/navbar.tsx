@@ -11,34 +11,21 @@ function Navbar() {
     <>
       <nav className="w-full h-16 mt-auto max-w-5xl">
         <div className="flex flex-row justify-between items-center h-full">
-          <Link href="/" passHref>
-            <span className="font-semibold text-xl cursor-pointer">
-              FundingDAO
+          <div className="">
+            <Link href="/" passHref>
+              <span className="font-semibold text-xl cursor-pointer">
+                FundingDAO
+              </span>
+            </Link>
+            <span className="text-xs bg-blue-500 text-white rounded-lg py-1 px-1 font-bold ml-2">
+              {!isMember && !isStakeholder
+                ? "Not a Member"
+                : isStakeholder
+                ? "Stakeholder"
+                : "Member"}
             </span>
-          </Link>
-          {account &&
-            !router.asPath.includes("/market") &&
-            !router.asPath.includes("/admin") && (
-              <div className="flex flex-row items-center justify-center h-full">
-                <TabButton
-                  title="Home"
-                  isActive={router.asPath === "/"}
-                  url={"/"}
-                />
-                <TabButton
-                  title="Portfolio"
-                  isActive={router.asPath === "/portfolio"}
-                  url={"/portfolio"}
-                />
-                {isMember && (
-                  <TabButton
-                    title="Create Proposal"
-                    isActive={router.asPath === "/portfolio"}
-                    url={"/portfolio"}
-                  />
-                )}
-              </div>
-            )}
+          </div>
+
           {account ? (
             <div className="bg-green-500 px-6 py-2 rounded-md cursor-pointer">
               <span className="text-lg text-white">
@@ -55,6 +42,42 @@ function Navbar() {
               <span className="text-lg text-white">Connect</span>
             </div>
           )}
+        </div>
+      </nav>
+      <nav className="w-full h-16 m-auto max-w-5xl flex justify-center">
+        <div className="flex flex-row justify-between items-center h-full">
+          {account &&
+            !router.asPath.includes("/market") &&
+            !router.asPath.includes("/admin") && (
+              <div className="flex flex-row items-center justify-center h-full">
+                <TabButton
+                  title="Home"
+                  isActive={router.asPath === "/"}
+                  url={"/"}
+                />
+                {isMember && (
+                  <TabButton
+                    title="Create Proposal"
+                    isActive={router.asPath === "/create-proposal"}
+                    url={"/create-proposal"}
+                  />
+                )}
+                {isMember && (
+                  <TabButton
+                    title="Stakeholder Lounge"
+                    isActive={router.asPath === "/stakeholder-lounge"}
+                    url={"/stakeholder-lounge "}
+                  />
+                )}
+                {isStakeholder && (
+                  <TabButton
+                    title="Investments"
+                    isActive={router.asPath === "/investments"}
+                    url={"/investments"}
+                  />
+                )}
+              </div>
+            )}
         </div>
       </nav>
     </>
@@ -75,10 +98,10 @@ const TabButton = ({
   return (
     <Link href={url} passHref>
       <div
-        className={`h-full px-4 flex items-center border-b-2 font-semibold hover:border-blue-700 hover:text-blue-700 cursor-pointer ${
+        className={`h-full px-3 flex items-center border-b-2 font-semibold hover:border-blue-700 hover:text-blue-700 cursor-pointer ${
           isActive
-            ? "border-blue-700 text-blue-700 text-lg font-semibold"
-            : "border-white text-gray-400 text-lg"
+            ? "border-blue-700 text-blue-700 text-base font-semibold"
+            : "border-white text-gray-400 text-base"
         }`}
       >
         <span>{title}</span>

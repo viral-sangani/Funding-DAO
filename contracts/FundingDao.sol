@@ -8,7 +8,7 @@ contract FundingDAO is ReentrancyGuard, AccessControl {
     bytes32 public constant MEMBER = keccak256("MEMBER");
     bytes32 public constant STAKEHOLDER = keccak256("STAKEHOLDER");
 
-    uint32 constant votingPeriod = 3 days;
+    uint32 constant votingPeriod = 3 minutes;
 
     uint256 public proposalsCount = 0;
 
@@ -66,7 +66,7 @@ contract FundingDAO is ReentrancyGuard, AccessControl {
     ) public payable onlyMember("Only members can create new proposal.") {
         require(
             msg.value == 5 * 10**18,
-            "You need to add 0.1 MATIC to create a proposal"
+            "You need to add 5 MATIC to create a proposal"
         );
         uint256 proposalId = proposalsCount;
         Proposal storage proposal = proposals[proposalId];

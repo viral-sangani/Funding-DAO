@@ -19,7 +19,14 @@ interface DataContextProps {
   allProposals: Proposal[];
   isStakeholder: boolean;
   isMember: boolean;
+  currentBal: string;
+  allVotes: string[];
+  allInvestedProposal: Proposal[];
   createStakeholder: (amount: string) => Promise<void>;
+  provideFunds: (id: string, amount: string) => Promise<void>;
+  getProposal: (id: string) => Promise<Proposal>;
+  vote: (id: string, vote: boolean) => Promise<void>;
+  releaseFunding: (id: string) => Promise<void>;
   createProposal: ({
     title,
     description,
@@ -41,8 +48,17 @@ const DataContext = createContext<DataContextProps>({
   allProposals: [],
   isStakeholder: false,
   isMember: false,
+  currentBal: "",
+  allVotes: [],
+  allInvestedProposal: [],
   createStakeholder: async (val) => {},
+  provideFunds: async (id, amount) => {},
   createProposal: async () => {},
+  vote: async () => {},
+  releaseFunding: async () => {},
+  getProposal: async (val) => {
+    return {} as Proposal;
+  },
 });
 
 export const DataProvider: React.FC = ({ children }) => {
@@ -60,6 +76,11 @@ export const useProviderData = () => {
   const [allProposals, setAllProposals] = useState<Proposal[]>([]);
   const [isStakeholder, setIsStakeholder] = useState(false);
   const [isMember, setIsMember] = useState(false);
+  const [currentBal, setCurrentBal] = useState("");
+  const [allVotes, setAllVotes] = useState<string[]>([]);
+  const [allInvestedProposal, setAllInvestedProposal] = useState<Proposal[]>(
+    []
+  );
 
   useEffect(() => {
     connect();
@@ -82,7 +103,7 @@ export const useProviderData = () => {
 
   const loadBlockchainData = async () => {
     const web3 = window.web3;
-    const fundingDaoData = FundingDAO.networks["1638702976684"];
+    const fundingDaoData = FundingDAO.networks["1638832387754"];
     if (fundingDaoData) {
       var fundingDaoContract = await new web3.eth.Contract(
         FundingDAO.abi,
@@ -94,9 +115,12 @@ export const useProviderData = () => {
         var totalProposals = await fundingDaoContract.methods
           .getAllProposals()
           .call({ from: account });
+        var tempProposals: Proposal[] = [];
         totalProposals.forEach((item: Proposal) => {
-          setAllProposals((prevState) => [...prevState, item]);
+          console.log(`item`, item);
+          tempProposals.push(item);
         });
+        setAllProposals(tempProposals);
         var isStakeholder = await fundingDaoContract.methods
           .isStakeholder()
           .call({
@@ -109,6 +133,33 @@ export const useProviderData = () => {
         });
         setIsMember(isMember);
         console.log(`isMember`, isMember);
+        if (isMember && !isStakeholder) {
+          var memberBal = await fundingDaoContract.methods.getMemberBal().call({
+            from: account,
+          });
+          setCurrentBal(Web3.utils.fromWei(memberBal, "ether"));
+        } else if (isMember && isStakeholder) {
+          var stakeholderBal = await fundingDaoContract.methods
+            .getStakeholderBal()
+            .call({
+              from: account,
+            });
+          setCurrentBal(Web3.utils.fromWei(stakeholderBal, "ether"));
+          var votes = await fundingDaoContract.methods.getVotes().call({
+            from: account,
+          });
+          var res = tempProposals.filter((proposal) => {
+            const vote = votes.find((vote: string) => vote === proposal.id);
+            if (vote) {
+              return true;
+            }
+            return false;
+          });
+          setAllInvestedProposal(res);
+          setAllVotes(votes);
+        } else {
+          setCurrentBal("");
+        }
         setLoading(false);
       }, 500);
     } else {
@@ -152,17 +203,57 @@ export const useProviderData = () => {
         // 500
       )
       .send({ from: account, value: Web3.utils.toWei("5", "ether") });
+    loadBlockchainData();
+  };
+
+  const getProposal = async (id: string) => {
+    var data = await fundingDao.methods.getProposal(id).call({
+      from: account,
+    });
+    var proposal: Proposal = data;
+    return proposal;
+  };
+
+  const vote = async (id: string, vote: boolean) => {
+    await fundingDao.methods.vote(id, vote).send({
+      from: account,
+    });
+    loadBlockchainData();
+  };
+
+  const provideFunds = async (id: string, amount: string) => {
+    await fundingDao.methods
+      .provideFunds(id, Web3.utils.toWei(amount, "ether"))
+      .send({
+        from: account,
+        value: Web3.utils.toWei(amount, "ether"),
+      });
+    loadBlockchainData();
+  };
+
+  const releaseFunding = async (id: string) => {
+    await fundingDao.methods.releaseFunding(id).send({
+      from: account,
+    });
+    loadBlockchainData();
   };
 
   return {
     account,
     fundingDao,
     loading,
-    connect,
     allProposals,
     isStakeholder,
     isMember,
+    currentBal,
+    allVotes,
+    allInvestedProposal,
+    connect,
     createStakeholder,
     createProposal,
+    getProposal,
+    provideFunds,
+    releaseFunding,
+    vote,
   };
 };

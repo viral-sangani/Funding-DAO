@@ -6,7 +6,7 @@ export const CreateMember = () => {
   const [val, setVal] = useState("");
   return (
     <main className="w-full flex flex-colpy-4 flex-grow max-w-5xl justify-center">
-      <div className="max-w-2xl border-2 border-blue-600 rounded-xl p-3 mt-10">
+      <div className="max-w-2xl border-2 border-blue-600 rounded-xl p-3 mt-10 h-full">
         <div className="flex flex-col justify-center">
           <span>You are not a member.</span>
           <p>

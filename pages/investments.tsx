@@ -1,14 +1,16 @@
 import Head from "next/head";
-import { useState } from "react";
-import { CreateMember } from "../components/createMember";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
 import Navbar from "../components/navbar";
-import { ProposalList } from "../components/proposalList";
-import { VoteModal } from "../components/voteModal";
+import { ProposalCard } from "../components/proposalCard";
+import { ProposalInvestmentCard } from "../components/proposalInvestmentCard";
 import { useData } from "../contexts/dataContext";
 import styles from "../styles/Home.module.css";
+import { Proposal } from "../utils/interface";
 
 export default function Home() {
-  const { isMember, isStakeholder, loading, account } = useData();
+  const { allInvestedProposal, loading, account, allProposals } = useData();
 
   if (loading) {
     return (
@@ -34,9 +36,21 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-
-      {!isMember && <CreateMember />}
-      {isMember && <ProposalList />}
+      <span className="text-lg font-bold mt-5">My Investments</span>
+      <main className="w-full flex flex-row py-4 flex-grow max-w-5xl">
+        {allInvestedProposal.length == 0 && (
+          <span className="text-lg font-bold mt-5 text-center">
+            Sorry, you have not voted in any proposals yet.
+          </span>
+        )}
+        {allInvestedProposal.map((proposal) => (
+          <ProposalInvestmentCard
+            key={proposal.id}
+            proposal={proposal}
+            openModal={() => {}}
+          />
+        ))}
+      </main>
     </div>
   );
 }
