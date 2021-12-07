@@ -8,32 +8,19 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@chakra-ui/icons": "^1.1.1",
-    "@chakra-ui/react": "^1.7.2",
-    "@emotion/react": "^11",
-    "@emotion/styled": "^11",
     "@headlessui/react": "^1.4.2",
-    "@mui/icons-material": "^5.2.0",
-    "@mui/material": "^5.2.2",
     "@openzeppelin/contracts": "^4.4.0",
     "@tailwindcss/line-clamp": "^0.2.2",
-    "@types/draft-js": "^0.11.7",
-    "@types/react-draft-wysiwyg": "^1.13.3",
     "autoprefixer": "^10.4.0",
-    "draft-js": "^0.11.7",
-    "formik": "^2.2.9",
-    "framer-motion": "^4",
     "next": "12.0.4",
     "npm": "^8.2.0",
     "postcss": "^8.4.4",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-draft-wysiwyg": "^1.14.7",
     "react-timer-hook": "^3.0.5",
     "react-toastify": "^8.1.0",
     "tailwindcss": "^2.2.19",
-    "web3": "^1.6.1",
-    "web3modal": "^1.9.4"
+    "web3": "^1.6.1"
   },
   "devDependencies": {
     "@types/node": "16.11.10",

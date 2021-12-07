@@ -1,14 +1,12 @@
 import Head from "next/head";
-import { useState } from "react";
 import { CreateMember } from "../components/createMember";
 import Navbar from "../components/navbar";
 import { ProposalList } from "../components/proposalList";
-import { VoteModal } from "../components/voteModal";
 import { useData } from "../contexts/dataContext";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
-  const { isMember, isStakeholder, loading, account } = useData();
+  const { isMember, loading, account } = useData();
 
   if (loading) {
     return (

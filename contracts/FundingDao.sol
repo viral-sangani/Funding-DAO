@@ -5,13 +5,6 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract FundingDAO is ReentrancyGuard, AccessControl {
-    bytes32 public constant MEMBER = keccak256("MEMBER");
-    bytes32 public constant STAKEHOLDER = keccak256("STAKEHOLDER");
-
-    uint32 constant votingPeriod = 3 minutes;
-
-    uint256 public proposalsCount = 0;
-
     struct Proposal {
         uint256 id;
         uint256 amount;
@@ -39,6 +32,12 @@ contract FundingDAO is ReentrancyGuard, AccessControl {
     mapping(address => uint256) private stakeholders;
     mapping(address => uint256) private members;
     mapping(address => uint256[]) private votes;
+
+    bytes32 public constant MEMBER = keccak256("MEMBER");
+    bytes32 public constant STAKEHOLDER = keccak256("STAKEHOLDER");
+
+    uint32 constant votingPeriod = 3 minutes;
+    uint256 public proposalsCount = 0;
 
     event NewMember(address indexed fromAddress, uint256 amount);
     event NewProposal(address indexed proposer, uint256 amount);
