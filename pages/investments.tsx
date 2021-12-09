@@ -1,16 +1,11 @@
 import Head from "next/head";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-
 import Navbar from "../components/navbar";
-import { ProposalCard } from "../components/proposalCard";
 import { ProposalInvestmentCard } from "../components/proposalInvestmentCard";
 import { useData } from "../contexts/dataContext";
 import styles from "../styles/Home.module.css";
-import { Proposal } from "../utils/interface";
 
 export default function Home() {
-  const { allInvestedProposal, loading, account, allProposals } = useData();
+  const { allInvestedProposal, loading, account } = useData();
 
   if (loading) {
     return (

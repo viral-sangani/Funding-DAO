@@ -17,7 +17,6 @@ export default function Home() {
     e.preventDefault();
     var id;
     if (image) {
-      console.log(`image`, image);
       let formData = new FormData();
       formData.append("image", image);
       var res = await fetch("/api/upload-image", {
@@ -26,9 +25,7 @@ export default function Home() {
       });
       var data = await res.json();
       id = data.id;
-      console.log(`id`, id);
     }
-    console.log(`data?.id ?? ""`, id ?? "");
     await createProposal({
       title,
       description,

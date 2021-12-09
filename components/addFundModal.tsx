@@ -1,9 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { DH_CHECK_P_NOT_SAFE_PRIME } from "constants";
-import { Fragment, useEffect, useState } from "react";
-import Web3 from "web3";
+import { Fragment, useState } from "react";
 import { useData } from "../contexts/dataContext";
-import { Proposal } from "../utils/interface";
 
 interface Props {
   isOpen: boolean;
@@ -42,8 +39,6 @@ export const AddFundsModal: React.FC<Props> = ({
             >
               <Dialog.Overlay className="fixed inset-0" />
             </Transition.Child>
-
-            {/* This element is to trick the browser into centering the modal contents. */}
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"

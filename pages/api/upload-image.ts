@@ -1,10 +1,9 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import Arweave from "arweave";
 import formidable, { File } from "formidable";
 import fs from "fs";
 import { CreateTransactionInterface } from "arweave/node/common";
-import { JWKInterface } from "arweave/node/lib/wallet";
+
 const key = JSON.parse(
   fs.readFileSync("arweave-key.json").toString().trim()
 );

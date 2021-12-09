@@ -46,38 +46,36 @@ function Navbar() {
       </nav>
       <nav className="w-full h-16 m-auto max-w-5xl flex justify-center">
         <div className="flex flex-row justify-between items-center h-full">
-          {account &&
-            !router.asPath.includes("/market") &&
-            !router.asPath.includes("/admin") && (
-              <div className="flex flex-row items-center justify-center h-full">
+          {account && (
+            <div className="flex flex-row items-center justify-center h-full">
+              <TabButton
+                title="Home"
+                isActive={router.asPath === "/"}
+                url={"/"}
+              />
+              {isMember && (
                 <TabButton
-                  title="Home"
-                  isActive={router.asPath === "/"}
-                  url={"/"}
+                  title="Create Proposal"
+                  isActive={router.asPath === "/create-proposal"}
+                  url={"/create-proposal"}
                 />
-                {isMember && (
-                  <TabButton
-                    title="Create Proposal"
-                    isActive={router.asPath === "/create-proposal"}
-                    url={"/create-proposal"}
-                  />
-                )}
-                {isMember && (
-                  <TabButton
-                    title="Stakeholder Lounge"
-                    isActive={router.asPath === "/stakeholder-lounge"}
-                    url={"/stakeholder-lounge "}
-                  />
-                )}
-                {isStakeholder && (
-                  <TabButton
-                    title="Investments"
-                    isActive={router.asPath === "/investments"}
-                    url={"/investments"}
-                  />
-                )}
-              </div>
-            )}
+              )}
+              {isMember && (
+                <TabButton
+                  title="Stakeholder Lounge"
+                  isActive={router.asPath === "/stakeholder-lounge"}
+                  url={"/stakeholder-lounge "}
+                />
+              )}
+              {isStakeholder && (
+                <TabButton
+                  title="Investments"
+                  isActive={router.asPath === "/investments"}
+                  url={"/investments"}
+                />
+              )}
+            </div>
+          )}
         </div>
       </nav>
     </>
