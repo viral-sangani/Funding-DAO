@@ -77,7 +77,7 @@ export const ProposalInvestmentCard: React.FC<Props> = ({
             ? `Total Funding Received - ${Web3.utils.fromWei(
                 proposal.totalFundRaised
               )} MATIC`
-            : "REJECTED"}
+            : ""}
         </span>
         {!proposal.isPaid && isCompleted && (
           <div

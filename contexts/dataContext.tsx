@@ -106,7 +106,7 @@ export const useProviderData = () => {
 
   const loadBlockchainData = async () => {
     const web3 = window.web3;
-    const fundingDaoData = FundingDAO.networks["1638888476435"];
+    const fundingDaoData = FundingDAO.networks["1639029018958"];
     if (fundingDaoData) {
       var fundingDaoContract = await new web3.eth.Contract(
         FundingDAO.abi,
@@ -131,6 +131,8 @@ export const useProviderData = () => {
         var isMember = await fundingDaoContract.methods.isMember().call({
           from: account,
         });
+
+        console.log(`isMember`, isMember);
         setIsMember(isMember);
         if (isMember && !isStakeholder) {
           var memberBal = await fundingDaoContract.methods.getMemberBal().call({
